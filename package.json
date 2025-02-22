@@ -1,0 +1,20 @@
+{
+  "name": "cm-ricochet",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc"
+  },
+  "keywords": ["ricochet", "rebound", "bouce", "pong"],
+  "author": "Cícero Mello",
+  "license": "MIT",
+  "type": "module",
+  "description": "Creates a ricochet effect for an element inside a container.",
+  "devDependencies": {
+    "typescript": "^5.7.3"
+  },
+  "files": [
+    "dist"
+  ]
+}
