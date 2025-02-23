@@ -15,8 +15,6 @@ export const startRicochet = ({
     onHitTop,
     onHitBottom
 }: RicochetParams) => {
-    const HORIZONTAL_SPEED = horizontalSpeed ?? 370
-    const VERTICAL_SPEED = verticalSpeed ?? 200
 
     let boxTop = 0
     let boxLeft = 0
@@ -44,7 +42,7 @@ export const startRicochet = ({
         const deltaTime = (time - lastHorizontalTime) / 1000
         lastHorizontalTime = time
 
-        boxLeft -= HORIZONTAL_SPEED * deltaTime
+        boxLeft -= horizontalSpeed * deltaTime
         item.style.left = boxLeft + "px"
 
         if (boxHitsContainerOn("left")) {
@@ -61,7 +59,7 @@ export const startRicochet = ({
         const deltaTime = (time - lastHorizontalTime) / 1000
         lastHorizontalTime = time
 
-        boxLeft += HORIZONTAL_SPEED * deltaTime
+        boxLeft += horizontalSpeed * deltaTime
         item.style.left = boxLeft + "px"
 
         if (boxHitsContainerOn("right")) {
@@ -78,7 +76,7 @@ export const startRicochet = ({
         const deltaTime = (time - lastVerticalTime) / 1000
         lastVerticalTime = time
 
-        boxTop -= VERTICAL_SPEED * deltaTime
+        boxTop -= verticalSpeed * deltaTime
         item.style.top = boxTop + "px"
 
         if (boxHitsContainerOn("top")) {
@@ -95,7 +93,7 @@ export const startRicochet = ({
         const deltaTime = (time - lastVerticalTime) / 1000
         lastVerticalTime = time
 
-        boxTop += VERTICAL_SPEED * deltaTime
+        boxTop += verticalSpeed * deltaTime
         item.style.top = boxTop + "px"
 
         if (boxHitsContainerOn("bottom")) {
