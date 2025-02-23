@@ -1,4 +1,6 @@
-## Ricochet Effect
+## cm-ricochet
+[![npm](https://img.shields.io/npm/v/cm-ricochet)](https://www.npmjs.com/package/cm-ricochet)
+[![npm bundle size](https://img.shields.io/bundlephobia/minzip/cm-ricochet)](https://bundlephobia.com/package/cm-ricochet)
 
 ### **Function: `startRicochet`**
 
@@ -23,7 +25,7 @@
 
 ---
 
-### **Return Value:**
+### **Return:**
 - A function `endRicochet(): void`, which stops the ricochet effect by canceling all animations.
 
 ---
@@ -74,6 +76,7 @@ const Component = () => {
 ### **Notes:**
 - The `container` will have `position: relative`.
 - The `item` will have `position: absolute`.
+- The movement update is synchronized with the screen's refresh rate.
 - The speed is **frame rate independent**, meaning it adapts to different refresh rates.
 - The function runs indefinitely unless manually stopped.
 - Callbacks allow custom behaviors when the item collides with the container’s edges.
