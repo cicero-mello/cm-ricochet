@@ -1,6 +1,8 @@
 import { InitialDirection, RicochetParams } from "./types"
+
 /**
  * Creates a ricochet effect on an element (item) inside a container (container).
+ * Pauses automatically if the tab/window is hidden, and resumes when visible.
  * @returns a function to stop the ricochet.
  */
 export const startRicochet = ({
@@ -22,6 +24,10 @@ export const startRicochet = ({
     let verticalAnimationId: number
     let lastVerticalTime = performance.now()
     let lastHorizontalTime = performance.now()
+    let paused = false
+
+    let currentHorizontalMove: (time: number) => void
+    let currentVerticalMove: (time: number) => void
 
     const boxHitsContainerOn = (direction: "top" | "bottom" | "right" | "left") => {
         const containerRect = container.getBoundingClientRect()
@@ -39,6 +45,7 @@ export const startRicochet = ({
     }
 
     const moveLeft = (time: number) => {
+        if (paused) return
         const deltaTime = (time - lastHorizontalTime) / 1000
         lastHorizontalTime = time
 
@@ -46,16 +53,19 @@ export const startRicochet = ({
         item.style.left = boxLeft + "px"
 
         if (boxHitsContainerOn("left")) {
-            if (onHitBorder) onHitBorder()
-            if (onHitLeft) onHitLeft()
-
+            onHitBorder?.()
+            onHitLeft?.()
             horizontalAnimationId = requestAnimationFrame(moveRight)
+            currentHorizontalMove = moveRight
             return
         }
+
         horizontalAnimationId = requestAnimationFrame(moveLeft)
+        currentHorizontalMove = moveLeft
     }
 
     const moveRight = (time: number) => {
+        if (paused) return
         const deltaTime = (time - lastHorizontalTime) / 1000
         lastHorizontalTime = time
 
@@ -63,16 +73,19 @@ export const startRicochet = ({
         item.style.left = boxLeft + "px"
 
         if (boxHitsContainerOn("right")) {
-            if (onHitBorder) onHitBorder()
-            if (onHitRight) onHitRight()
-
+            onHitBorder?.()
+            onHitRight?.()
             horizontalAnimationId = requestAnimationFrame(moveLeft)
+            currentHorizontalMove = moveLeft
             return
         }
+
         horizontalAnimationId = requestAnimationFrame(moveRight)
+        currentHorizontalMove = moveRight
     }
 
     const moveUp = (time: number) => {
+        if (paused) return
         const deltaTime = (time - lastVerticalTime) / 1000
         lastVerticalTime = time
 
@@ -80,16 +93,19 @@ export const startRicochet = ({
         item.style.top = boxTop + "px"
 
         if (boxHitsContainerOn("top")) {
-            if (onHitBorder) onHitBorder()
-            if (onHitTop) onHitTop()
-
+            onHitBorder?.()
+            onHitTop?.()
             verticalAnimationId = requestAnimationFrame(moveDown)
+            currentVerticalMove = moveDown
             return
         }
+
         verticalAnimationId = requestAnimationFrame(moveUp)
+        currentVerticalMove = moveUp
     }
 
     const moveDown = (time: number) => {
+        if (paused) return
         const deltaTime = (time - lastVerticalTime) / 1000
         lastVerticalTime = time
 
@@ -97,13 +113,41 @@ export const startRicochet = ({
         item.style.top = boxTop + "px"
 
         if (boxHitsContainerOn("bottom")) {
-            if (onHitBorder) onHitBorder()
-            if (onHitBottom) onHitBottom()
-
+            onHitBorder?.()
+            onHitBottom?.()
             verticalAnimationId = requestAnimationFrame(moveUp)
+            currentVerticalMove = moveUp
             return
         }
+
         verticalAnimationId = requestAnimationFrame(moveDown)
+        currentVerticalMove = moveDown
+    }
+
+    const pause = () => {
+        if (!paused) {
+            paused = true
+            cancelAnimationFrame(horizontalAnimationId)
+            cancelAnimationFrame(verticalAnimationId)
+        }
+    }
+
+    const resume = () => {
+        if (paused) {
+            paused = false
+            lastHorizontalTime = performance.now()
+            lastVerticalTime = performance.now()
+            horizontalAnimationId = requestAnimationFrame(currentHorizontalMove)
+            verticalAnimationId = requestAnimationFrame(currentVerticalMove)
+        }
+    }
+
+    const handleVisibilityChange = () => {
+        if (document.visibilityState === "hidden") {
+            pause()
+        } else if (document.visibilityState === "visible") {
+            resume()
+        }
     }
 
     const start = () => {
@@ -125,15 +169,20 @@ export const startRicochet = ({
             verticalMove
         ] = directionMap[initialDirection ?? "bottom-right"]
 
+        currentHorizontalMove = horizontalMove
+        currentVerticalMove = verticalMove
+
         horizontalAnimationId = requestAnimationFrame(horizontalMove)
         verticalAnimationId = requestAnimationFrame(verticalMove)
     }
 
+    document.addEventListener("visibilitychange", handleVisibilityChange)
     start()
 
     const endRicochet = () => {
         cancelAnimationFrame(horizontalAnimationId)
         cancelAnimationFrame(verticalAnimationId)
+        document.removeEventListener("visibilitychange", handleVisibilityChange)
     }
 
     return endRicochet
