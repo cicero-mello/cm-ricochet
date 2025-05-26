@@ -1,16 +1,17 @@
 {
     "name": "cm-ricochet",
-    "version": "1.0.4",
+    "version": "1.0.5",
     "main": "dist/index.js",
     "types": "dist/index.d.ts",
     "scripts": {
-        "build": "tsc"
+        "build": "tsup"
     },
     "author": "Cícero Mello",
     "license": "MIT",
     "type": "module",
     "description": "Creates a ricochet effect for an element inside a container.",
     "devDependencies": {
+        "tsup": "^8.5.0",
         "typescript": "^5.7.3"
     },
     "files": [
